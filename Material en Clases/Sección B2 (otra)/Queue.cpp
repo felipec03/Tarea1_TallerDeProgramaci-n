@@ -1,5 +1,4 @@
 #include "Queue.h"
-
 Queue::Queue(int size) {
     this->size = size;
     arr = new State*[size];
