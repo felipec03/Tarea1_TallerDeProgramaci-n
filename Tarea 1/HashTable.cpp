@@ -47,6 +47,7 @@ void HashTable::insert(State *x){
 }
 
 // Buscar un State en la tabla
+// Función de búsqueda con tiempo O(1) en promedio
 State* HashTable::search(State *x){
     int h=hash(x);
     while (arr[h]!=nullptr){
@@ -59,6 +60,7 @@ State* HashTable::search(State *x){
 }
 
 // Eliminar un State de la tabla
+// Con complejidad temporal O(1) en promedio
 void HashTable::remove(State *x){
     int h=hash(x);
     while (arr[h]!=nullptr){
@@ -81,4 +83,3 @@ void HashTable::print(){
         }
     }
 }
-
