@@ -18,3 +18,27 @@ void Heap::insert(int value) {
 	count++;
 	heapifyUp();
 }
+
+int Heap::remove() {
+	if (count == 0) {
+		return -1;
+	}
+	int value = heap[0];
+	heap[0] = heap[count - 1];
+	count--;
+	heapifyDown();
+	return value;
+}
+
+bool Heap::isEmpty() {
+	return count == 0;
+}
+
+void Heap::print() {
+	for (int i = 0; i < count; i++) {
+		cout << heap[i] << " ";
+	}
+	cout << endl;
+}
+
+

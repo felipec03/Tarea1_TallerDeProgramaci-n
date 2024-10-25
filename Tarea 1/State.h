@@ -3,13 +3,13 @@ using namespace std;
 
 class State {
     public:
-    int a0; // maximo 3
-    int a1; // maximo 5
-    State *parent;
-    char *op;
-    float priority;
-    State(int a0, int a1, State *parent, char *op);
+    int* arregloJugs;                   // Arreglo con los valores de los jarrones
+    int numJugs;                        // Número de jarrones
+    State *parent;                      // Puntero al estado padre
+    char *op;                           // Operación que se realizó para llegar a este estado
+    float priority;                     // Prioridad del estado
+    
+    State(int* arregloJugs, State *parent, char *op);
     State();
     void print();
-    bool is_goal();
 };

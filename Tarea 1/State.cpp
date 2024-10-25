@@ -1,16 +1,15 @@
 #include "State.h"
 // se puede cambiar char* por string
 
-State::State(int a0, int a1, State *parent, char *op) {
-    this->a0 = a0;
-    this->a1 = a1;
+State::State(int *arregloJugs, int numJugs, State *parent, char *op) {
+    this->arregloJugs = arregloJugs;
+    this->numJugs = numJugs;
     this->parent = parent;
     this->op = op;
 }
 
 State::State() {
-    a0 = -1;
-    a1 = -1;
+    arregloJugs = nullptr;
     parent = nullptr;
     op = (char *) "";
 }
@@ -24,7 +23,4 @@ void State::print() { // recorrido en preorden
     cout << "a0: " << a0 << " a1: " << a1 << endl;
 }
 
-bool State::is_goal() {
-    return a1 == 4;
-}
 
