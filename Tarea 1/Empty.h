@@ -3,9 +3,9 @@
 using namespace std;
 
 // Fill hereda de Operation de manera pública
-class Fill : public Operation {
+class Empty : public Operation {
     public:
-    Fill();
+    Empty();
     State* operation(State* currentState, int a);
     void printOperation();
 };

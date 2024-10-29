@@ -14,6 +14,8 @@ class Heap{
 		Heap(int size);
 		// Destructor
 		~Heap();
+		// Función para hacer heapify hacia arriba
+		void heapifyUp();
 		// Función para insertar un estado en el heap con complejidad O(log n)
 		void insert(State* s);
 		// Función para remover el estado con menor f en el heap con complejidad O(log n)

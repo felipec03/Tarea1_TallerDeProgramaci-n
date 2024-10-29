@@ -1,8 +1,9 @@
 #include "State.h"
 // se puede cambiar char* por string
 
-State::State(int *arregloJugs, int numJugs, State *parent, char *op) {
+State::State(int *arregloJugs, int* maxCapacities, int numJugs, State *parent, string op) {
     this->arregloJugs = arregloJugs;
+    this->maxCapacities = maxCapacities;
     this->numJugs = numJugs;
     this->parent = parent;
     this->op = op;
@@ -10,17 +11,16 @@ State::State(int *arregloJugs, int numJugs, State *parent, char *op) {
 
 State::State() {
     arregloJugs = nullptr;
+    maxCapacities = nullptr;
     parent = nullptr;
-    op = (char *) "";
+    op = "";
 }
 
-void State::print() { // recorrido en preorden
-    if (parent != nullptr) { // si no es el estado inicial
-//        cout<< "parent: "<<parent<<endl;
-        parent->print();
-        cout << op << endl;
+// print() method
+void State::print() {
+    cout << "Jarrones: ";
+    for (int i = 0; i < numJugs; i++) {
+        cout << arregloJugs[i] << " ";
     }
-    cout << "a0: " << a0 << " a1: " << a1 << endl;
+    cout << endl;
 }
-
-

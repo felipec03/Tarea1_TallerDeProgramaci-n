@@ -4,12 +4,13 @@ using namespace std;
 class State {
     public:
     int* arregloJugs;                   // Arreglo con los valores de los jarrones
+    int* maxCapacities;                 // Arreglo con las capacidades máximas de los jarrones
     int numJugs;                        // Número de jarrones
     State *parent;                      // Puntero al estado padre
-    char *op;                           // Operación que se realizó para llegar a este estado
+    string op;                           // Operación que se realizó para llegar a este estado
     float priority;                     // Prioridad del estado
     
-    State(int* arregloJugs, State *parent, char *op);
+    State(int* arregloJugs, int* maxCapacities, int numJugs, State *parent, string op);
     State();
     void print();
 };

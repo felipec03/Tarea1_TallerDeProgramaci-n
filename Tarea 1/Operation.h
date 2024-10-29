@@ -1,4 +1,5 @@
 #include <iostream>
+#include "State.h"
 using namespace std;
 
 // La clase operación tiene por objetivo generalizar las operaciones Fill, Empty y Pour.
@@ -10,11 +11,13 @@ using namespace std;
 
 class Operation{
     public:
-    Operation operation();
-    // El método operation(int a) recibe un entero y retorna un puntero a State.
-    // a corresponde al índice del jarro que se quiera llenar en el arreglo de jarras
-    State* virtual operation(int a);
-    // El método operation(int a, int b) recibe dos enteros y retorna un puntero a State.
-    // a corresponde al índice del jarro que se quiera trasvasijar hacia b en el arreglo de jarras
-    State* virtual operation(int a, int b);
+        string operacion;
+        
+        Operation();
+        // El método operation(int a) recibe un entero y retorna un puntero a State.
+        // a corresponde al índice del jarro que se quiera llenar en el arreglo de jarras
+        virtual State* operation(State* currentState, int a);
+        // El método operation(int a, int b) recibe dos enteros y retorna un puntero a State.
+        // a corresponde al índice del jarro que se quiera trasvasijar hacia b en el arreglo de jarras
+        virtual State* operation(State* currentState, int a, int b);
 };

@@ -1,15 +1,21 @@
 FLAGS = -g
 #FLAGS = -O2
-all: testQueue test_State testJug
+all: Operation.o Fill.o Empty.o Pour.o State.o Queue.o Jug.o HashTable.o Heap.o Main.o
 
-testQueue: State.o Queue.o testQueue.cpp
-	g++ $(FLAGS) State.o Queue.o testQueue.cpp -o testQueue
+Main.o : main.cpp
+	g++ $(FLAGS) -c main.cpp
 
-test_State: State.o testQueue.cpp
-	g++ $(FLAGS) State.o test_State.cpp -o test_State
+Operation.o: Operation.h Operation.cpp
+	g++ $(FLAGS) -c Operation.cpp
 
-testJug: State.o testJug.cpp
-	g++ $(FLAGS) State.o testJug.cpp -o testJug
+Fill.o : Fill.h Fill.cpp 
+	g++ $(FLAGS) -c Fill.cpp
+
+Empty.o : Empty.h Empty.cpp 
+	g++ $(FLAGS) -c Empty.cpp
+
+Pour.o : Pour.h Pour.cpp 
+	g++ $(FLAGS) -c Pour.cpp
 
 State.o: State.h State.cpp
 	g++ $(FLAGS) -c State.cpp
@@ -27,4 +33,4 @@ Heap.o: Heap.h Heap.cpp
 	g++ $(FLAGS) -c Heap.cpp
 
 clean:
-	rm $(FLAGS) -f *.o testQueue test_State
+	rm -f *.o all

@@ -10,6 +10,14 @@ Heap::~Heap() {
 	delete[] heap;
 }
 
+void Heap::heapifyUp(){
+	int index = count - 1;
+	while (index >= 0 && heap[index] > heap[(index - 1) / 2]) {
+		swap(heap[index], heap[(index - 1) / 2]);
+		index = (index - 1) / 2;
+	}
+}
+
 void Heap::insert(int value) {
 	if (count == size) {
 		return;
