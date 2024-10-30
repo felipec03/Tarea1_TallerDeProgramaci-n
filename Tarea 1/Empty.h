@@ -1,3 +1,6 @@
+#ifdef EMPTY_H
+#define EMPTY_H
+
 #include <iostream>
 #include "Operation.h"
 using namespace std;
@@ -9,3 +12,5 @@ class Empty : public Operation {
     State* operation(State* currentState, int a);
     void printOperation();
 };
+
+#endif

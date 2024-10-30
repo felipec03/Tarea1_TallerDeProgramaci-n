@@ -1,3 +1,6 @@
+#ifndef OPERATION_H
+#define OPERATION_H
+
 #include <iostream>
 #include "State.h"
 using namespace std;
@@ -21,3 +24,5 @@ class Operation{
         // a corresponde al índice del jarro que se quiera trasvasijar hacia b en el arreglo de jarras
         virtual State* operation(State* currentState, int a, int b);
 };
+
+#endif

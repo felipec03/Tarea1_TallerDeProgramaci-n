@@ -1,3 +1,6 @@
+#ifndef POUR_H
+#define POUR_H
+
 #include <iostream>
 #include "Operation.h"
 using namespace std;
@@ -9,3 +12,5 @@ class Pour : public Operation {
     State* operation(State* currentState, int a, int b);
     void printOperation();
 };
+
+#endif

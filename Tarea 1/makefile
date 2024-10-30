@@ -1,6 +1,6 @@
 FLAGS = -g
 #FLAGS = -O2
-all: Operation.o Fill.o Empty.o Pour.o State.o Queue.o Jug.o HashTable.o Heap.o Main.o
+all: State.o Operation.o Fill.o Empty.o Pour.o  Jug.o HashTable.o Heap.o Main.o
 
 Main.o : main.cpp
 	g++ $(FLAGS) -c main.cpp
@@ -19,9 +19,6 @@ Pour.o : Pour.h Pour.cpp
 
 State.o: State.h State.cpp
 	g++ $(FLAGS) -c State.cpp
-
-Queue.o: Queue.h Queue.cpp
-	g++ $(FLAGS) -c Queue.cpp
 
 Jug.o: Jug.h Jug.cpp
 	g++ $(FLAGS) -c Jug.cpp

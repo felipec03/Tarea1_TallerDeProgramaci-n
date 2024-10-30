@@ -1,7 +1,6 @@
 #include "Operation.h"
 
 Operation::Operation(){
-
 }
 
 State* Operation::operation(State* currentState, int a){
