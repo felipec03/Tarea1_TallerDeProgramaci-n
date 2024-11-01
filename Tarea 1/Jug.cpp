@@ -2,7 +2,8 @@
 
 Jug::Jug(State* initialState, int sizeOpen, int sizeAll) {
     // Inicialización de estructuras de datos
-
+    this->initialState = initialState;
+    
     numberOfOperations = 3;
     operationArray = new Operation*[numberOfOperations];
     operationArray[0] = new Fill();
@@ -80,57 +81,54 @@ State* Jug::solve(){
 */
 
 State* Jug::solve() {
-    while (!open->isEmpty()) {
-        State* currentState = open->pop();
+    open->push(initialState);
+    all->insert(initialState);
 
-        if (currentState->isFinal()) {
-            // Print the solution path
-            std::cout << "Solution found:\n";
-            printSolution(currentState);
-            return currentState;
+    while (!open->isEmpty()) {
+        State* current = open->pop();
+
+        if (current->isSolution()) {
+            return current;
         }
 
-
+        // Generate successors
         for (int i = 0; i < numberOfOperations; i++) {
             Operation* op = operationArray[i];
 
-            // For operations that take one argument (Fill, Empty)
             if (op->isUnary()) {
-                for (int j = 0; j < currentState->numJugs; j++) {
-                    State* newState = op->operation(currentState, j);
-                    if (newState != nullptr) {
-                        newState->parent = currentState;
-                        newState->priority = currentState->priority + 1;
-                        newState->op = op->operacion + " jug " + std::to_string(j);
-                        if (!all->contains(newState)) {
-                            open->push(newState);
-                            all->insert(newState);
-                        } 
+                // Unary operations (Fill, Empty)
+                for (int j = 0; j < current->numJugs; j++) {
+                    State* successor = op->operation(current, j);
+                    if (successor != nullptr) {
+                        if (!all->contains(successor)) {
+                            open->push(successor);
+                            all->insert(successor);
+                        } else {
+                            delete successor; // Prevent memory leak
+                        }
                     }
                 }
-            }
-            // For operations that take two arguments (Pour)
-            else {
-                for (int j = 0; j < currentState->numJugs; j++) {
-                    for (int k = 0; k < currentState->numJugs; k++) {
-                        if (j == k) continue;
-                        State* newState = op->operation(currentState, j, k);
-                        if (newState != nullptr) {
-                            newState->parent = currentState;
-                            newState->priority = currentState->priority + 1;
-                            newState->op = op->operacion + " from jug " + std::to_string(j) + " to jug " + std::to_string(k);
-                            if (!all->contains(newState)) {
-                                open->push(newState);
-                                all->insert(newState);
-                            } 
+            } else {
+                // Binary operations (Pour)
+                for (int from = 0; from < current->numJugs; from++) {
+                    for (int to = 0; to < current->numJugs; to++) {
+                        if (from != to) {
+                            State* successor = op->operation(current, from, to);
+                            if (successor != nullptr) {
+                                if (!all->contains(successor)) {
+                                    open->push(successor);
+                                    all->insert(successor);
+                                } else {
+                                    delete successor; // Prevent memory leak
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
-    std::cout << "No solution found.\n";
-    return nullptr;
+    return nullptr; // No solution found
 }
 
 void Jug::printSolution(State* state) {

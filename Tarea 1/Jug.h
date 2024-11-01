@@ -9,6 +9,7 @@ using namespace std;
 
 class Jug {
     public:
+    State* initialState;
     Heap* open;
     HashTable* all;
 

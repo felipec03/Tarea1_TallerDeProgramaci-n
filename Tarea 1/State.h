@@ -15,7 +15,7 @@ class State {
     string op;                          // Operación que se realizó para llegar a este estado
     float priority;                     // Prioridad del estado
     
-    State(int* arregloJugs, int* maxCapacities, int numJugs, State *parent, string op);
+    State(int* arregloJugs, int* goalVolumes, int* maxCapacities, int numJugs, State *parent, string op);
     State();
     ~State();
     bool isSolution();
