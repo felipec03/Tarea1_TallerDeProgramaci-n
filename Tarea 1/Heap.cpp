@@ -12,8 +12,8 @@ Heap::Heap(){
     arr = new State*[0];
 }
 
-Heap::~Heap(){
-    delete[] arr;
+Heap::~Heap() {
+    delete[] arr; 
 }
 
 void Heap::push(State *x){
@@ -46,6 +46,10 @@ State* Heap::pop() {
         bubbleDown(0);
         return x;
     }
+}
+
+bool Heap::isEmpty(){
+    return number==0;
 }
 
 void Heap::swap(int i, int j){

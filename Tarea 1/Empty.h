@@ -1,4 +1,4 @@
-#ifdef EMPTY_H
+#ifndef EMPTY_H
 #define EMPTY_H
 
 #include <iostream>
@@ -9,8 +9,10 @@ using namespace std;
 class Empty : public Operation {
     public:
     Empty();
-    State* operation(State* currentState, int a);
+    State* operation(State* currentState, int a) override;
     void printOperation();
+    std::string getName() override;
+    bool isUnary() override;
 };
 
 #endif

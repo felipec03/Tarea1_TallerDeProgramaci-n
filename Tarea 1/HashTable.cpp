@@ -31,9 +31,13 @@ HashTable::~HashTable(){
     delete[] arr;
 }
 
-// Función de hash para un State
-int HashTable::hash(State *x){
-    return (x->a0+x->a1)%capacity;
+// Función de hash generalizada para n Jarros
+int HashTable::hash(State *s){
+    int hash = 0;
+    for(int i = 0 ; i < s->numJugs ; i++){
+        hash += s->arregloJugs[i];
+    }
+    return hash % capacity;
 }
 
 // Insertar un State en la tabla
@@ -47,11 +51,11 @@ void HashTable::insert(State *x){
 }
 
 // Buscar un State en la tabla
-// Función de búsqueda con tiempo O(1) en promedio
+// Función de búsqueda para n Jarros, si lo encuentra retorna el State, si no retorna nullptr
 State* HashTable::search(State *x){
     int h=hash(x);
     while (arr[h]!=nullptr){
-        if (arr[h]->a0==x->a0 && arr[h]->a1==x->a1){
+        if (arr[h]->arregloJugs == x->arregloJugs){
             return arr[h];
         }
         h=(h+1)%capacity;
@@ -59,12 +63,17 @@ State* HashTable::search(State *x){
     return nullptr;
 }
 
-// Eliminar un State de la tabla
-// Con complejidad temporal O(1) en promedio
+// Verificar si un State está en la tabla
+bool HashTable::contains(State *x){
+    return search(x) != nullptr;
+}
+
+// Eliminar un State de la tabla hash
+// Generalizado para n Jarros
 void HashTable::remove(State *x){
     int h=hash(x);
     while (arr[h]!=nullptr){
-        if (arr[h]->a0==x->a0 && arr[h]->a1==x->a1){
+        if (arr[h]->arregloJugs == x->arregloJugs){
             delete arr[h];
             arr[h]=nullptr;
             number--;

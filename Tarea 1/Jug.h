@@ -11,9 +11,13 @@ class Jug {
     public:
     Heap* open;
     HashTable* all;
+
+    int numberOfOperations;
     Operation** operationArray;
 
     // Métodos
-    Jug(int sizeOpen, int sizeAll); 		// Construye con tamaños de open y all
-    State* solve();							// Retorna el estado solución.
+    Jug(State* initialState, int sizeOpen, int sizeAll); 		// Construye con tamaños de open y all
+    State* solve();							                    // Retorna el estado solución.
+    void printSolution(State* s);				                // Imprime la solución
+    ~Jug();								                        // Destructor
 };

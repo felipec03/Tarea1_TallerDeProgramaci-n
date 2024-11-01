@@ -1,9 +1,18 @@
 FLAGS = -g
 #FLAGS = -O2
-all: State.o Operation.o Fill.o Empty.o Pour.o  Jug.o HashTable.o Heap.o Main.o
+all: test_main
 
-Main.o : main.cpp
-	g++ $(FLAGS) -c main.cpp
+test_main: State.o HashTable.o Heap.o Operation.o Fill.o Empty.o Pour.o Jug.o
+	g++ $(FLAGS) State.o HashTable.o Heap.o Operation.o Fill.o Empty.o Pour.o Jug.o main.cpp -o test_main
+
+State.o: State.h State.cpp
+	g++ $(FLAGS) -c State.cpp
+
+HashTable.o: HashTable.h HashTable.cpp
+	g++ $(FLAGS) -c HashTable.cpp
+
+Heap.o: Heap.h Heap.cpp
+	g++ $(FLAGS) -c Heap.cpp
 
 Operation.o: Operation.h Operation.cpp
 	g++ $(FLAGS) -c Operation.cpp
@@ -17,17 +26,8 @@ Empty.o : Empty.h Empty.cpp
 Pour.o : Pour.h Pour.cpp 
 	g++ $(FLAGS) -c Pour.cpp
 
-State.o: State.h State.cpp
-	g++ $(FLAGS) -c State.cpp
-
 Jug.o: Jug.h Jug.cpp
 	g++ $(FLAGS) -c Jug.cpp
-
-HashTable.o: HashTable.h HashTable.cpp
-	g++ $(FLAGS) -c HashTable.cpp
-
-Heap.o: Heap.h Heap.cpp
-	g++ $(FLAGS) -c Heap.cpp
 
 clean:
 	rm -f *.o all

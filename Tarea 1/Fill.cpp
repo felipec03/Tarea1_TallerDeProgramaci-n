@@ -1,15 +1,30 @@
 #include "Fill.h"
 
-Fill::Fill(){
+Fill::Fill() {
+    operacion = "Fill";
 }
 
-// Utilizando polimorfismo, se define la operación de Fill
-// que recibe un entero y retorna un puntero a State
-// a corresponde al índice del jarro que se quiera llenar en el arreglo de jarras
-State* Fill::operation(State* currentState, int a){
-    // Se crea un nuevo estado con el estado actual
-    State* newState = currentState;
-        newState->arregloJugs[a] = newState->maxCapacities[a];
-        newState->op = "Fill";
-        return newState;
+State* Fill::operation(State* currentState, int a) {
+    // Implement fill logic
+    // Check if the jug is already full
+    if (currentState->arregloJugs[a] == currentState->maxCapacities[a]) {
+        return nullptr;
     }
+    // Create new state with the jug filled
+    int* newJugs = new int[currentState->numJugs];
+    for (int i = 0; i < currentState->numJugs; i++) {
+        newJugs[i] = currentState->arregloJugs[i];
+    }
+    newJugs[a] = currentState->maxCapacities[a];
+    State* newState = new State(newJugs, currentState->maxCapacities, currentState->numJugs, currentState, "Fill jug " + std::to_string(a));
+    delete[] newJugs;
+    return newState;
+}
+
+string Fill::getName() {
+    return "Fill";
+}
+
+bool Fill::isUnary() {
+    return true;
+}

@@ -9,8 +9,10 @@ using namespace std;
 class Pour : public Operation {
     public:
     Pour();
-    State* operation(State* currentState, int a, int b);
+    State* operation(State* currentState, int a, int b) override;
     void printOperation();
+    std::string getName() override;
+    bool isUnary() override;
 };
 
 #endif

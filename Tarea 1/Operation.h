@@ -15,7 +15,7 @@ using namespace std;
 class Operation{
     public:
         string operacion;
-        
+        virtual ~Operation() {}
         Operation();
         // El método operation(int a) recibe un entero y retorna un puntero a State.
         // a corresponde al índice del jarro que se quiera llenar en el arreglo de jarras
@@ -23,6 +23,8 @@ class Operation{
         // El método operation(int a, int b) recibe dos enteros y retorna un puntero a State.
         // a corresponde al índice del jarro que se quiera trasvasijar hacia b en el arreglo de jarras
         virtual State* operation(State* currentState, int a, int b);
+        virtual std::string getName() = 0;
+        virtual bool isUnary() = 0; // Returns true if the operation takes one argument
 };
 
 #endif

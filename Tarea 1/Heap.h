@@ -1,3 +1,6 @@
+#ifndef HEAP_H
+#define HEAP_H
+
 #include <iostream>
 #include <string>
 #include "State.h"
@@ -18,7 +21,10 @@ class Heap {
         ~Heap(); // Destructor
         void push(State *x); // Inserta un elemento en el Heap
         State *pop(); // Elimina y retorna el elemento de mayor prioridad
+        bool isEmpty(); // Retorna true si el Heap esta vacio
         void bubbleUp(int i); // Mueve el elemento en la posicion i hacia arriba con swap
         void bubbleDown(int i); // Mueve el elemento en la posicion i hacia abajo con swap
         void swap(int i, int j); // Intercambia los elementos en las posiciones i y j del arreglo
 };
+
+#endif
