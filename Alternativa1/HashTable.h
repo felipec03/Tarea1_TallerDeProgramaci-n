@@ -10,7 +10,7 @@ class HashTable {
         State **arr;
         int number;
     public:
-        HashTable(int n);
+        HashTable(size_t n);
         HashTable();
         ~HashTable();
         void insert(State *x);
@@ -18,7 +18,7 @@ class HashTable {
         bool contains(State *x);
         void remove(State *x);
         void print();
-        int hash(State *x);
+        size_t hash(State *x);
 };
 
 #endif
