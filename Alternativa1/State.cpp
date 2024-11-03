@@ -55,10 +55,13 @@ void State::print() {
     cout << endl;
 }
 
+// Función heurística
 int State::heuristic() {
     int h = 0;
     for(int i = 0; i < numJugs; i++) {
-        h += abs(arregloJugs[i] - goalVolumes[i]);
+        if (goalVolumes[i] != 0) {
+            h += abs(arregloJugs[i] - goalVolumes[i]);
+        }
     }
     return h;
 }

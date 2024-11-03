@@ -1,35 +1,26 @@
 // HashTable.cpp
 
 #include "HashTable.h"
+#include <functional>
 
-HashTable::HashTable(int n) {
+HashTable::HashTable(size_t n) {
     capacity = n;
     number = 0;
-    arr = new State*[n];
-    for (int i = 0; i < n; i++) {
-        arr[i] = nullptr;
-    }
+    arr = new State*[capacity]();
 }
 
-HashTable::HashTable(){
-    capacity = 100;
-    number = 0;
-    arr = new State*[capacity];
-    for (int i=0; i<capacity; i++){
-        arr[i] = nullptr;
-    }
-}
+HashTable::HashTable() : HashTable(101) {} // Default capacity set to a prime number
 
 HashTable::~HashTable() {
     delete[] arr;
 }
 
-int HashTable::hash(State *s){
-    int hash = 0;
-    for(int i = 0 ; i < s->numJugs ; i++){
-        hash = hash * 31 + s->arregloJugs[i];
+size_t HashTable::hash(State *s) {
+    size_t hash = 0;
+    for (int i = 0; i < s->numJugs; i++) {
+        hash = (hash * 31 + static_cast<size_t>(s->arregloJugs[i])) % capacity;
     }
-    return abs(hash) % capacity;
+    return hash;
 }
 
 void HashTable::insert(State *x){

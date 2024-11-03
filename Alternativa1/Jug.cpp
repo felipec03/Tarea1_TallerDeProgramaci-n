@@ -24,10 +24,16 @@ Jug::Jug(State* initialState, int sizeOpen, int sizeAll) {
 }
 
 State* Jug::solve() {
+    int iterations = 0;
     while (!open->isEmpty()) {
         State* current = open->pop();
-
+        iterations++;
+        
+        if (iterations % 100000 == 0) {
+            std::cout << "Iterations: " << iterations << std::endl;
+        }
         if (current->isSolution()) {
+            cout << "Resuelto en " << iterations << " iteraciones." << endl;
             return current;
         }
 

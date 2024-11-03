@@ -91,9 +91,9 @@ int main() {
     State* solution = j.solve();
 
     if (solution != nullptr) {
-        std::cout << "Solution found!" << std::endl;
+        std::cout << "Se encontró una solución." << std::endl;
         j.printSolution(solution);
     } else {
-        std::cout << "No solution exists." << std::endl;
+        std::cout << "No se encontró una solución..." << std::endl;
     }
 }
