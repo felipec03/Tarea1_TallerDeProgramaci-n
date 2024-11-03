@@ -9,18 +9,18 @@ using namespace std;
 bool readFile(const std::string& filename, int*& array1, int*& array2, int& count) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << filename << std::endl;
+        std::cerr << "No se pudo abrír el archivo: " << filename << std::endl;
         return false;
     }
 
-    // Read the first line
+    // lectura de la primera linea
     std::string line;
     if (!std::getline(file, line)) {
-        std::cerr << "File is empty or cannot read the first line." << std::endl;
+        std::cerr << "El archivo está vacío, o ha ocurrido un error..." << std::endl;
         return false;
     }
 
-    // Read integers from the first line
+    // lectura de la primera linea
     std::istringstream iss1(line);
     int value;
     int size1 = 0;
@@ -28,41 +28,43 @@ bool readFile(const std::string& filename, int*& array1, int*& array2, int& coun
         size1++;
     }
 
-    // Allocate array1
+    // asignar memoria a arreglo 1
     array1 = new int[size1];
-    iss1.clear(); // Clear the stream state
-    iss1.str(line); // Reset the stream with the line again
+    // limpiar y resetear stream
+    iss1.clear(); 
+    iss1.str(line); 
 
     int index1 = 0;
     while (iss1 >> value) {
         array1[index1++] = value;
     }
 
-    // Read the second line
+    // lectura de la segunda linea
     if (!std::getline(file, line)) {
-        std::cerr << "Cannot read the second line." << std::endl;
+        std::cerr << "No se pudo leer la segunda línea." << std::endl;
         delete[] array1; // Clean up
         return false;
     }
 
-    // Read integers from the second line
+    // leer enteros de la segunda linea
     std::istringstream iss2(line);
     int size2 = 0;
     while (iss2 >> value) {
         size2++;
     }
 
-    // Allocate array2
+    // asignamos memoria a segundo arreglo
     array2 = new int[size2];
-    iss2.clear(); // Clear the stream state
-    iss2.str(line); // Reset the stream with the line again
+    // limpiar y resetear stream
+    iss2.clear(); 
+    iss2.str(line); 
 
     int index2 = 0;
     while (iss2 >> value) {
         array2[index2++] = value;
     }
 
-    // Set count to the size of the first array
+    // verificar que ambos arreglos tengan el mismo tamaño
     count = size1;
 
     file.close();
