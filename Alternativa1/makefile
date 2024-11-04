@@ -1,4 +1,4 @@
-FLAGS = -g
+FLAGS = -g -O2
 #FLAGS = -O2
 all: test_main
 

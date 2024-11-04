@@ -1,6 +1,6 @@
 #include "Jug.h"
 
-Jug::Jug(State* initialState, int sizeOpen, int sizeAll) {
+Jug::Jug(State* initialState, unsigned long sizeOpen, unsigned long sizeAll) {
     this->initialState = initialState;
 
     numberOfOperations = 3;
@@ -16,75 +16,50 @@ Jug::Jug(State* initialState, int sizeOpen, int sizeAll) {
     open->push(initialState);
     all->insert(initialState);
 
-    // Initialize the statesCreated array
-    statesCapacity = 100;
-    statesCount = 0;
-    statesCreated = new State*[statesCapacity];
-    statesCreated[statesCount++] = initialState;
+    //statesCapacity = 100;
+    //statesCount = 0;
+    //statesCreated = new State*[statesCapacity];
+    //statesCreated[statesCount++] = initialState;
 }
 
 State* Jug::solve() {
-    int iterations = 0;
+    // Identify jugs that need to change
+    bool* isGoalJug = new bool[initialState->numJugs];
+    for (int i = 0; i < initialState->numJugs; ++i) {
+        isGoalJug[i] = (initialState->goalVolumes[i] != initialState->arregloJugs[i]);
+    }
+
     while (!open->isEmpty()) {
         State* current = open->pop();
-        iterations++;
-        
-        if (iterations % 100000 == 0) {
-            std::cout << "Iterations: " << iterations << std::endl;
-        }
+
         if (current->isSolution()) {
-            cout << "Resuelto en " << iterations << " iteraciones." << endl;
+            delete[] isGoalJug;
             return current;
         }
 
         for (int i = 0; i < numberOfOperations; ++i) {
             Operation* operation = operationArray[i];
+
             if (operation->isUnary()) {
-                for (int j = 0; j < current->numJugs; ++j) {
-                    State* newState = operation->operation(current, j);
-                    if (newState != nullptr && !all->contains(newState)) {
-                        newState->priority = current->priority + 1 + newState->heuristic();
+                for (int jug = 0; jug < initialState->numJugs; ++jug) {
+                    State* newState = operation->operation(current, jug);
+                    if (newState && !all->contains(newState)) {
+                        newState->priority = newState->heuristic();
                         open->push(newState);
                         all->insert(newState);
-
-                        // Add newState to statesCreated array
-                        if (statesCount == statesCapacity) {
-                            // Resize the array
-                            statesCapacity *= 2;
-                            State** temp = new State*[statesCapacity];
-                            for (int k = 0; k < statesCount; ++k) {
-                                temp[k] = statesCreated[k];
-                            }
-                            delete[] statesCreated;
-                            statesCreated = temp;
-                        }
-                        statesCreated[statesCount++] = newState;
                     } else {
                         delete newState;
                     }
                 }
             } else {
-                for (int j = 0; j < current->numJugs; ++j) {
-                    for (int k = 0; k < current->numJugs; ++k) {
-                        if (j != k) {
-                            State* newState = operation->operation(current, j, k);
-                            if (newState != nullptr && !all->contains(newState)) {
-                                newState->priority = current->priority + 1 + newState->heuristic();
+                for (int fromJug = 0; fromJug < initialState->numJugs; ++fromJug) {
+                    for (int toJug = 0; toJug < initialState->numJugs; ++toJug) {
+                        if (fromJug != toJug) {
+                            State* newState = operation->operation(current, fromJug, toJug);
+                            if (newState && !all->contains(newState)) {
+                                newState->priority = newState->heuristic();
                                 open->push(newState);
                                 all->insert(newState);
-
-                                // Add newState to statesCreated array
-                                if (statesCount == statesCapacity) {
-                                    // Resize the array
-                                    statesCapacity *= 2;
-                                    State** temp = new State*[statesCapacity];
-                                    for (int l = 0; l < statesCount; ++l) {
-                                        temp[l] = statesCreated[l];
-                                    }
-                                    delete[] statesCreated;
-                                    statesCreated = temp;
-                                }
-                                statesCreated[statesCount++] = newState;
                             } else {
                                 delete newState;
                             }
@@ -94,6 +69,8 @@ State* Jug::solve() {
             }
         }
     }
+
+    delete[] isGoalJug;
     return nullptr;
 }
 
@@ -115,10 +92,4 @@ Jug::~Jug() {
     delete[] operationArray;
     delete open;
     delete all;
-
-    // Delete all created State objects
-    for (int i = 0; i < statesCount; ++i) {
-        delete statesCreated[i];
-    }
-    delete[] statesCreated;
 }

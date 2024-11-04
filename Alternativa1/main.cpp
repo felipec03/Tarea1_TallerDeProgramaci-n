@@ -82,18 +82,30 @@ int main() {
     cout << "Por favor Ingrese el nombre del archivo: ";
     cin >> fileName;
 
-    readFile(fileName,initialVolumes, goalVolumes, numJugs);
+    if (!readFile(fileName, initialVolumes, goalVolumes, numJugs)) {
+        return 1;
+    }
 
-    State* initialState = new State(initialVolumes, initialVolumes, goalVolumes, numJugs, nullptr, "Inicio");
-    
-    Jug j = Jug(initialState, 10000000, 10000000);
-    
+    int* currentVolumes = new int[numJugs];
+    for (int i = 0; i < numJugs; i++) {
+        currentVolumes[i] = 0;
+    }
+
+    State* initialState = new State(currentVolumes, initialVolumes, goalVolumes, numJugs, nullptr, "Inicio");
+
+    Jug j(initialState, 1000000, 1000000);
     State* solution = j.solve();
 
     if (solution != nullptr) {
-        std::cout << "Se encontró una solución." << std::endl;
+        cout << "Se encontró una solución." << endl;
         j.printSolution(solution);
     } else {
-        std::cout << "No se encontró una solución..." << std::endl;
+        cout << "No se encontró una solución..." << endl;
     }
+
+    delete[] currentVolumes;
+    delete[] initialVolumes;
+    delete[] goalVolumes;
+
+    return 0;
 }

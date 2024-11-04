@@ -2,28 +2,24 @@
 #define JUG_H
 
 #include <iostream>
-#include "Heap.h"
+#include "MinHeap.h"
 #include "HashTable.h"
 #include "Fill.h"
 #include "Empty.h"
 #include "Pour.h"
 
 class Jug {
-public:
+private:
     State* initialState;
-    Heap* open;
-    HashTable* all;
-
+    MinHeap* openSet;
+    HashTable* closedSet;
     int numberOfOperations;
     Operation** operationArray;
-
-    //State** statesCreated;
-    //int statesCapacity;
-    //int statesCount;
-
+    
+public:
     Jug(State* initialState, unsigned long sizeOpen, unsigned long sizeAll);
     State* solve();
-    void printSolution(State* s);
+    void printSolution(State* goalState);
     ~Jug();
 };
 

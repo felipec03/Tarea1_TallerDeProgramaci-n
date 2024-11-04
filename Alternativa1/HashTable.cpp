@@ -15,21 +15,20 @@ HashTable::~HashTable() {
     delete[] arr;
 }
 
-size_t HashTable::hash(State *s) {
-    size_t hash = 0;
-    for (int i = 0; i < s->numJugs; i++) {
-        hash = (hash * 31 + static_cast<size_t>(s->arregloJugs[i])) % capacity;
-    }
-    return hash;
+int HashTable::hash(State *s) {
+    return (int)(s->hash_value % capacity);
 }
 
-void HashTable::insert(State *x){
+void HashTable::insert(State* x) {
+    if (number >= capacity / 2) {
+        resize();
+    }
     int h = hash(x);
-    while (arr[h]!=nullptr){
+    while (arr[h] != nullptr) {
         if (arr[h]->equals(x)) {
-            return; // Already exists
+            return;
         }
-        h = (h+1)%capacity;
+        h = (h + 1) % capacity;
     }
     arr[h] = x;
     number++;
@@ -73,4 +72,22 @@ void HashTable::print(){
             arr[i]->print();
         }
     }
+}
+
+void HashTable::resize() {
+    int oldCapacity = capacity;
+    capacity *= 2;
+    State** newArr = new State*[capacity]();
+
+    for (int i = 0; i < oldCapacity; ++i) {
+        if (arr[i] != nullptr) {
+            int h = hash(arr[i]);
+            while (newArr[h] != nullptr) {
+                h = (h + 1) % capacity;
+            }
+            newArr[h] = arr[i];
+        }
+    }
+    delete[] arr;
+    arr = newArr;
 }

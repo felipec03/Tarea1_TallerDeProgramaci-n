@@ -18,7 +18,8 @@ class HashTable {
         bool contains(State *x);
         void remove(State *x);
         void print();
-        size_t hash(State *x);
+        int hash(State *x);
+        void resize();
 };
 
 #endif

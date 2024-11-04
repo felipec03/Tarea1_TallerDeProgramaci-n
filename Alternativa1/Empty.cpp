@@ -15,13 +15,13 @@ State* Empty::operation(State* currentState, int a){
         newJugs[i] = currentState->arregloJugs[i];
     }
     newJugs[a] = 0;
-    State* newState = new State(newJugs, currentState->maxCapacities, currentState->goalVolumes, currentState->numJugs, currentState, "Empty jug " + std::to_string(a));
+    State* newState = new State(newJugs, currentState->maxCapacities, currentState->goalVolumes, currentState->numJugs, currentState, "Vaciar bidón -> " + std::to_string(a));
     delete[] newJugs;
     return newState;
 }
 
 string Empty::getName() {
-    return "Empty";
+    return "Vaciar";
 }
 
 bool Empty::isUnary() {

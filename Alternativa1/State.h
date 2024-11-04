@@ -14,16 +14,17 @@ class State {
         int* maxCapacities;     // Max capacities
         int* goalVolumes;       // Goal volumes
         int numJugs;            // Number of jugs
-        State* parent;          // Parent state
-        string op;              // Operation performed
-        float priority;         // Priority for A*
+        State* parent;                   // Parent state
+        string op;                       // Operation performed
+        float priority;                  // Priority for A*
+        unsigned long hash_value;        // Valor precalculado del hash
 
         State(int* arregloJugs, int* maxCapacities, int* goalVolumes, int numJugs, State* parent, string op);
         State(const State& other);
         ~State();
         bool isSolution();
         void print();
-        int heuristic();        // Heuristic function
+        int heuristic() const;        
         bool equals(const State* other) const;
 };
 

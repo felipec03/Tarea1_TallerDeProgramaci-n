@@ -17,13 +17,13 @@ State* Pour::operation(State* currentState, int a, int b){
     int water = std::min(currentState->arregloJugs[a], currentState->maxCapacities[b] - currentState->arregloJugs[b]);
     newJugs[a] -= water;
     newJugs[b] += water;
-    State* newState = new State(newJugs, currentState->maxCapacities, currentState->goalVolumes, currentState->numJugs, currentState, "Pour from jug " + std::to_string(a) + " to jug " + std::to_string(b));
+    State* newState = new State(newJugs, currentState->maxCapacities, currentState->goalVolumes, currentState->numJugs, currentState, "Trasvasijar bidón " + std::to_string(a) + " -> " + std::to_string(b));
     delete[] newJugs;
     return newState;
 }
 
 string Pour::getName() {
-    return "Pour";
+    return "Trasvasijar";
 }
 
 bool Pour::isUnary() {
