@@ -103,6 +103,7 @@ int main() {
         cout << "No se encontró una solución..." << endl;
     }
 
+
     delete[] currentVolumes;
     delete[] initialVolumes;
     delete[] goalVolumes;

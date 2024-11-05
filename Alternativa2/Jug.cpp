@@ -1,69 +1,97 @@
 #include "Jug.h"
-#define MAX_DEPTH 1000 // Adjust as necessary
-
 
 Jug::Jug(State* initialState, unsigned long sizeOpen, unsigned long sizeAll) {
     this->initialState = initialState;
-    
-    // Initialize operations
+
     numberOfOperations = 3;
     operationArray = new Operation*[numberOfOperations];
     operationArray[0] = new Fill();
     operationArray[1] = new Empty();
     operationArray[2] = new Pour();
 
-    // Initialize data structures
-    openSet = new MinHeap(sizeOpen);
-    closedSet = new HashTable(sizeAll);
+    open = new PriorityQueue(sizeOpen);
+    all = new HashTable(sizeAll);
 
-    // Set initial state
-    initialState->cost = 0;
     initialState->priority = initialState->heuristic();
-    openSet->insert(initialState);
+    open->push(initialState);
+    all->insert(initialState);
+
+    //statesCapacity = 100;
+    //statesCount = 0;
+    //statesCreated = new State*[statesCapacity];
+    //statesCreated[statesCount++] = initialState;
 }
 
 State* Jug::solve() {
-    while (!openSet->isEmpty()) {
-        State* current = openSet->extractMin();
+    // Identify jugs that need to change
+    bool* isGoalJug = new bool[initialState->numJugs];
+    for (int i = 0; i < initialState->numJugs; ++i) {
+        isGoalJug[i] = (initialState->goalVolumes[i] != initialState->arregloJugs[i]);
+    }
 
+    int numberOfStates = 0;
+
+    open->push(initialState);
+    all->insert(initialState);
+
+    while (!open->isEmpty()) {
+        State* current = open->pop();
+        ++numberOfStates;
+        
         if (current->isSolution()) {
+            delete[] isGoalJug;
+            cout << "Solved in " << numberOfStates << " states" << endl;
             return current;
         }
 
-        if (closedSet->contains(current)) {
-            continue;
-        }
-
-        closedSet->insert(current);
-
-        // Generate successors
         for (int i = 0; i < numberOfOperations; ++i) {
-            Operation* op = operationArray[i];
-            if (op->isUnary()) {
-                for (int j = 0; j < current->numJugs; ++j) {
-                    State* newState = op->operation(current, j);
-                    if (newState && !closedSet->contains(newState)) {
-                        newState->cost = current->cost + 1;
-                        newState->priority = newState->cost + newState->heuristic();
-                        openSet->insert(newState);
+            Operation* operation = operationArray[i];
+
+            if (operation->isUnary()) {
+                for (int jug = 0; jug < initialState->numJugs; ++jug) {
+                    if (isGoalJug[jug]) {
+                        State* newState = operation->operation(current, jug);
+                        if (newState && !all->contains(newState)) {
+                            newState->priority = newState->heuristic();
+                            open->push(newState);
+                            all->insert(newState);
+                        } else {
+                            delete newState;
+                        }
                     }
                 }
             } else {
-                for (int j = 0; j < current->numJugs; ++j) {
-                    for (int k = 0; k < current->numJugs; ++k) {
-                        if (j == k) continue;
-                        State* newState = op->operation(current, j, k);
-                        if (newState && !closedSet->contains(newState)) {
-                            newState->cost = current->cost + 1;
-                            newState->priority = newState->cost + newState->heuristic();
-                            openSet->insert(newState);
+                for (int fromJug = 0; fromJug < initialState->numJugs; ++fromJug) {
+                    for (int toJug = 0; toJug < initialState->numJugs; ++toJug) {
+                        if (fromJug != toJug && (isGoalJug[fromJug] || isGoalJug[toJug])) {
+                            State* newState = operation->operation(current, fromJug, toJug);
+                            if (newState && !all->contains(newState)) {
+                                newState->priority = newState->heuristic();
+                                open->push(newState);
+                                all->insert(newState);
+                            } else {
+                                delete newState;
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+    delete[] isGoalJug;
     return nullptr;
+}
+
+void Jug::printSolution(State* state) {
+    if (state == nullptr) {
+        return;
+    }
+    printSolution(state->parent);
+    if (!state->op.empty()) {
+        std::cout << state->op << std::endl;
+        state->print();
+    }
 }
 
 Jug::~Jug() {
@@ -71,21 +99,6 @@ Jug::~Jug() {
         delete operationArray[i];
     }
     delete[] operationArray;
-    delete openSet;
-    delete closedSet;
-}
-
-void Jug::printSolution(State* goalState) {
-    vector<string> steps;
-    State* temp = goalState;
-    while (temp != nullptr) {
-        if (!temp->operation.empty()) {
-            steps.push_back(temp->operation);
-        }
-        temp = temp->parent;
-    }
-    cout << "Solución encontrada en " << steps.size() << " pasos:" << endl;
-    for (auto it = steps.rbegin(); it != steps.rend(); ++it) {
-        cout << *it << endl;
-    }
+    delete open;
+    delete all;
 }

@@ -2,103 +2,111 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
+#include <string> 
+#include <cmath>
 using namespace std;
 
-bool readFile(const std::string& filename, int*& initialVolumes, int*& goalVolumes, int& numJugs) {
-    ifstream file(filename);
+bool readFile(const std::string& filename, int*& array1, int*& array2, int& count) {
+    std::ifstream file(filename);
     if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo: " << filename << endl;
+        std::cerr << "No se pudo abrír el archivo: " << filename << std::endl;
         return false;
     }
 
-    string line;
-    if (!getline(file, line)) {
-        cerr << "El archivo está vacío, o ha ocurrido un error..." << endl;
+    // lectura de la primera linea
+    std::string line;
+    if (!std::getline(file, line)) {
+        std::cerr << "El archivo está vacío, o ha ocurrido un error..." << std::endl;
         return false;
     }
 
-    istringstream iss1(line);
+    // lectura de la primera linea
+    std::istringstream iss1(line);
     int value;
-    vector<int> initialVolumesVec;
+    int size1 = 0;
     while (iss1 >> value) {
-        initialVolumesVec.push_back(value);
+        size1++;
     }
 
-    if (!getline(file, line)) {
-        cerr << "No se pudo leer la segunda línea." << endl;
+    // asignar memoria a arreglo 1
+    array1 = new int[size1];
+    // limpiar y resetear stream
+    iss1.clear(); 
+    iss1.str(line); 
+
+    int index1 = 0;
+    while (iss1 >> value) {
+        array1[index1++] = value;
+    }
+
+    // lectura de la segunda linea
+    if (!std::getline(file, line)) {
+        std::cerr << "No se pudo leer la segunda línea." << std::endl;
+        delete[] array1; // Clean up
         return false;
     }
 
-    istringstream iss2(line);
-    vector<int> goalVolumesVec;
+    // leer enteros de la segunda linea
+    std::istringstream iss2(line);
+    int size2 = 0;
     while (iss2 >> value) {
-        goalVolumesVec.push_back(value);
+        size2++;
     }
 
-    if (initialVolumesVec.size() != goalVolumesVec.size()) {
-        cerr << "Las líneas del archivo deben tener el mismo número de valores." << endl;
-        return false;
+    // asignamos memoria a segundo arreglo
+    array2 = new int[size2];
+    // limpiar y resetear stream
+    iss2.clear(); 
+    iss2.str(line); 
+
+    int index2 = 0;
+    while (iss2 >> value) {
+        array2[index2++] = value;
     }
 
-    numJugs = initialVolumesVec.size();
-    initialVolumes = new int[numJugs];
-    goalVolumes = new int[numJugs];
+    // verificar que ambos arreglos tengan el mismo tamaño
+    count = size1;
 
-    for (int i = 0; i < numJugs; ++i) {
-        initialVolumes[i] = initialVolumesVec[i];
-        goalVolumes[i] = goalVolumesVec[i];
-    }
-
+    file.close();
     return true;
 }
 
+
 int main() {
-    int* initialVolumes = nullptr;
-    int* goalVolumes = nullptr;
-    int numJugs = 0;
+    int* initialVolumes;
+    int* goalVolumes;
+    int numJugs;
     string fileName;
 
-    int* maxCapacities = nullptr;
-    int* goalVolumes = nullptr;
-    int numJugs = 0;
-
-    
-    cout << "Ingrese el nombre del archivo (por ejemplo, E3.txt): ";
+    cout << "Resolución del problema de los N Jarros" << endl;
+    cout << "Por favor Ingrese el nombre del archivo: ";
     cin >> fileName;
 
     if (!readFile(fileName, initialVolumes, goalVolumes, numJugs)) {
         return 1;
     }
 
-    int* maxCapacities = new int[numJugs];
-    for (int i = 0; i < numJugs; ++i) {
-        maxCapacities[i] = initialVolumes[i];
+    int* currentVolumes = new int[numJugs];
+    for (int i = 0; i < numJugs; i++) {
+        currentVolumes[i] = 0;
     }
 
-    // Initialize all jugs to 0 volume for the initial state
-    int* startVolumes = new int[numJugs];
-    for (int i = 0; i < numJugs; ++i) {
-        startVolumes[i] = 0;
-    }
+    State* initialState = new State(currentVolumes, initialVolumes, goalVolumes, numJugs, nullptr, "Inicio");
 
-    State* initialState = new State(startVolumes, maxCapacities, goalVolumes, numJugs, nullptr, "Inicio");
-
-    Jug jugSolver(initialState, 10000, 10000);
-
-    State* solution = jugSolver.solve();
+    Jug j(initialState, 1000000, 1000000);
+    State* solution = j.solve();
 
     if (solution != nullptr) {
-        jugSolver.printSolution(solution);
+        cout << "Se encontró una solución." << endl;
+        j.printSolution(solution);
     } else {
-        cout << "No se encontró solución." << endl;
+        cout << "No se encontró una solución..." << endl;
     }
 
-    // Clean up
+
+    delete[] currentVolumes;
     delete[] initialVolumes;
     delete[] goalVolumes;
-    delete[] maxCapacities;
-    delete initialState;
 
     return 0;
 }

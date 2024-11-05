@@ -1,61 +1,53 @@
 // State.cpp
 
 #include "State.h"
+#include <cmath>
 
-State::State(int* arregloJugs, int* maxCapacities, int* goalVolumes, int numJugs, State* parent, const std::string& op)
-    : arregloJugs(arregloJugs), maxCapacities(maxCapacities),
-      goalVolumes(goalVolumes), numJugs(numJugs), parent(parent),
-      operation(op), cost(0), priority(0), totalDiff(-1), isDeadEnd(false) {
-    computeKey();
+State::State(int* arregloJugs, const int* maxCapacities, const int* goalVolumes, int numJugs, State* parent, const std::string& op) {
+    this->numJugs = numJugs;
+    this->arregloJugs = new int[numJugs];
+    for (int i = 0; i < numJugs; i++) {
+        this->arregloJugs[i] = arregloJugs[i];
+    }
+    this->maxCapacities = maxCapacities;   // Shared pointers
+    this->goalVolumes = goalVolumes;       // Shared pointers
+    this->parent = parent;
+    this->op = op;
+    this->priority = 0.0f;
+
+    // Precompute the hash value
+    unsigned long hash = 0;
+    unsigned long p = 31;
+    unsigned long m = 1000000009;
+    unsigned long power_of_p = 1;
+    for (int i = 0; i < numJugs; ++i) {
+        hash = (hash + (this->arregloJugs[i] + 1) * power_of_p) % m;
+        power_of_p = (power_of_p * p) % m;
+    }
+    this->hash_value = hash;
+}
+
+State::State(const State& other) {
+    numJugs = other.numJugs;
+    arregloJugs = new int[numJugs];
+    for (int i = 0; i < numJugs; i++) {
+        arregloJugs[i] = other.arregloJugs[i];
+    }
+    maxCapacities = other.maxCapacities;   // Shared pointers
+    goalVolumes = other.goalVolumes;       // Shared pointers
+    parent = other.parent;
+    op = other.op;
+    priority = other.priority;
+    hash_value = other.hash_value;
 }
 
 State::~State() {
-    if (arregloJugs != nullptr) {
-        delete[] arregloJugs;
-        arregloJugs = nullptr;
-    }
-    if (maxCapacities != nullptr) {
-        delete[] maxCapacities;
-        maxCapacities = nullptr;
-    }
-    if (goalVolumes != nullptr) {
-        delete[] goalVolumes;
-        goalVolumes = nullptr;
-    }
-}
-
-void State::computeKey() {
-    // Simple hash function combining jug volumes
-    key = 0;
-    for (int i = 0; i < numJugs; ++i) {
-        key = key * 31 + arregloJugs[i];
-    }
-}
-
-bool State::equals(const State* other) const {
-    if (other == nullptr || numJugs != other->numJugs) {
-        return false;
-    }
-    for (int i = 0; i < numJugs; ++i) {
-        if (arregloJugs[i] != other->arregloJugs[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-// Overload for array comparison
-bool State::equals(const int* jugArray) const {
-    for (int i = 0; i < numJugs; ++i) {
-        if (arregloJugs[i] != jugArray[i]) {
-            return false;
-        }
-    }
-    return true;
+    delete[] arregloJugs;
+    // Do not delete maxCapacities or goalVolumes since they are shared
 }
 
 bool State::isSolution() const {
-    for (int i = 0; i < numJugs; ++i) {
+    for (int i = 0; i < numJugs; i++) {
         if (arregloJugs[i] != goalVolumes[i]) {
             return false;
         }
@@ -63,31 +55,29 @@ bool State::isSolution() const {
     return true;
 }
 
-// Heurística para A*
-// Se enfoca en la diferencia entre los volúmenes actuales y los volúmenes objetivo
-// El nombre formal de esta heurística es "Manhattan distance"
-int State::heuristic() {
-    if (totalDiff != -1) {
-        return totalDiff;
-    }
-    totalDiff = 0;
-    for (int i = 0; i < numJugs; ++i) {
-        totalDiff += abs(arregloJugs[i] - goalVolumes[i]);
-    }
-    return totalDiff;
-}
-
-bool State::isDifferentFrom(const State* other) const {
-    for (int i = 0; i < numJugs; ++i) {
-        if (arregloJugs[i] != other->arregloJugs[i]) return true;
-    }
-    return false;
-}
-
 void State::print() const {
-    cout << "Estado actual: ";
+    std::cout << "Estado actual: ";
     for (int i = 0; i < numJugs; i++) {
-        cout << arregloJugs[i] << " ";
+        std::cout << arregloJugs[i] << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
+}
+
+int State::heuristic() const {
+    int h = 0;
+    for (int i = 0; i < numJugs; ++i) {
+        int diff = std::abs(goalVolumes[i] - arregloJugs[i]);
+        h += diff;
+    }
+    return h;
+}
+
+bool State::equals(const State* other) const {
+    if (this->numJugs != other->numJugs) return false;
+    for (int i = 0; i < numJugs; ++i) {
+        if (this->arregloJugs[i] != other->arregloJugs[i]) {
+            return false;
+        }
+    }
+    return true;
 }

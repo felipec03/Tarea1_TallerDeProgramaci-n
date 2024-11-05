@@ -5,32 +5,24 @@
 
 #include <iostream>
 
-using namespace std;
-
 class State {
 public:
-    int* arregloJugs;
-    int* maxCapacities;
-    int* goalVolumes;
-    int numJugs;
-    State* parent;
-    std::string operation;
-    int cost;
-    int priority;
-    int totalDiff;
-    bool isDeadEnd;
-    unsigned long long key; // Unique key for the state
+    int* arregloJugs;               // Current volumes
+    const int* maxCapacities;       // Max capacities (shared)
+    const int* goalVolumes;         // Goal volumes (shared)
+    int numJugs;                    // Number of jugs
+    State* parent;                  // Parent state
+    std::string op;                 // Operation performed
+    float priority;                 // Priority for A*
+    unsigned long hash_value;       // Precomputed hash value
 
-    State(int* arregloJugs, int* maxCapacities, int* goalVolumes, int numJugs, State* parent, const std::string& op);
+    State(int* arregloJugs, const int* maxCapacities, const int* goalVolumes, int numJugs, State* parent, const std::string& op);
+    State(const State& other);
     ~State();
-
-    bool equals(const State* other) const;
-    bool equals(const int* jugArray) const;
-    int heuristic();
     bool isSolution() const;
-    bool isDifferentFrom(const State* other) const;
-    void computeKey(); // Method to compute the state's key
     void print() const;
+    int heuristic() const;
+    bool equals(const State* other) const;
 };
 
 #endif

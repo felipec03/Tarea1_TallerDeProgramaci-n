@@ -29,11 +29,15 @@ State* Jug::solve() {
         isGoalJug[i] = (initialState->goalVolumes[i] != initialState->arregloJugs[i]);
     }
 
+    int numberOfStates = 0;
+
     while (!open->isEmpty()) {
         State* current = open->pop();
-
+        ++numberOfStates;
+        
         if (current->isSolution()) {
             delete[] isGoalJug;
+            cout << "Resuelto en " << numberOfStates << " estados" << endl;
             return current;
         }
 
@@ -42,6 +46,7 @@ State* Jug::solve() {
 
             if (operation->isUnary()) {
                 for (int jug = 0; jug < initialState->numJugs; ++jug) {
+
                     State* newState = operation->operation(current, jug);
                     if (newState && !all->contains(newState)) {
                         newState->priority = newState->heuristic();

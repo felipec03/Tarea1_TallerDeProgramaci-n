@@ -1,27 +1,27 @@
-FLAGS = -Wall -march=native -Ofast -ffast-math
-#FLAGS = -O2
+FLAGS = -pg -Wall -march=native -Ofast -ffast-math
+
 all: test_main
 
-test_main: State.o HashTable.o MinHeap.o Operation.o Fill.o Empty.o Pour.o Jug.o
-	g++ $(FLAGS) State.o HashTable.o MinHeap.o Operation.o Fill.o Empty.o Pour.o Jug.o main.cpp -o test_main
+test_main: State.o HashTable.o PriorityQueue.o Operation.o Fill.o Empty.o Pour.o Jug.o
+	g++ $(FLAGS) State.o HashTable.o PriorityQueue.o Operation.o Fill.o Empty.o Pour.o Jug.o main.cpp -o test_main
 
-testHashTable: State.o HashTable.o testHashTable.cpp 
-	g++ $(FLAGS) State.o HashTable.o testHashTable.cpp -o testHashTable
+test_priority_queue: PriorityQueue.o testPriorityQueue.cpp
+	g++ $(FLAGS) PriorityQueue.o test_priority_queue.cpp -o test_priority_queue
 
-testMinHeap: State.o MinHeap.o testMinHeap.cpp
-	g++ $(FLAGS) State.o MinHeap.o testMinHeap.cpp -o testMinHeap
+test_hash_table: HashTable.o testHashTable.cpp
+	g++ $(FLAGS) HashTable.o testHashTable.cpp -o test_hash_table
 
-testState: State.o testState.cpp
-	g++ $(FLAGS) State.o testState.cpp -o testState
-
-testOperation: Operation.o Fill.o Empty.o Pour.o testOperation.cpp
-	g++ $(FLAGS) Operation.o Fill.o Empty.o Pour.o testOperation.cpp -o testOperation
+test_state: State.o testState.cpp
+	g++ $(FLAGS) State.o testState.cpp -o test_state
 
 State.o: State.h State.cpp
 	g++ $(FLAGS) -c State.cpp
 
 HashTable.o: HashTable.h HashTable.cpp
 	g++ $(FLAGS) -c HashTable.cpp
+
+PriorityQueue.o: PriorityQueue.h PriorityQueue.cpp
+	g++ $(FLAGS) -c PriorityQueue.cpp
 
 Operation.o: Operation.h Operation.cpp
 	g++ $(FLAGS) -c Operation.cpp
@@ -37,9 +37,6 @@ Pour.o : Pour.h Pour.cpp
 
 Jug.o: Jug.h Jug.cpp
 	g++ $(FLAGS) -c Jug.cpp
-
-MinHeap.o: MinHeap.h MinHeap.cpp
-	g++ $(FLAGS) -c MinHeap.cpp
 
 clean:
 	rm -f *.o all

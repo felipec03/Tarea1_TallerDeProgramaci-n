@@ -15,7 +15,7 @@ State* Fill::operation(State* currentState, int a) {
         newJugs[i] = currentState->arregloJugs[i];
     }
     newJugs[a] = currentState->maxCapacities[a];
-    State* newState = new State(newJugs, currentState->maxCapacities, currentState->goalVolumes, currentState->numJugs, currentState, "Llenar bidon -> " + std::to_string(a));
+    State* newState = new State(newJugs, currentState->maxCapacities, currentState->goalVolumes, currentState->numJugs, currentState, "Llenar bidon: " + std::to_string(a));
     delete[] newJugs;
     return newState;
 }

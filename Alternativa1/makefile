@@ -1,4 +1,4 @@
-FLAGS = -g -O2
+FLAGS = -Wall -march=native -Ofast -ffast-math
 #FLAGS = -O2
 all: test_main
 

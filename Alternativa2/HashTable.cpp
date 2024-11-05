@@ -1,77 +1,112 @@
 // HashTable.cpp
 
 #include "HashTable.h"
+#include <functional>
 
-#include "HashTable.h"
-
-HashTable::HashTable(int capacity)
-    : capacity(capacity), size(0), loadFactorThreshold(0.75f) {
-    table = new HashNode*[capacity];
-    for (int i = 0; i < capacity; ++i) {
-        table[i] = nullptr;
-    }
+HashTable::HashTable(size_t n) {
+    capacity = n;
+    number = 0;
+    arr = new State*[capacity]();
 }
+
+HashTable::HashTable() : HashTable(101) {} // Default capacity set to a prime number
 
 HashTable::~HashTable() {
-    for (int i = 0; i < capacity; ++i) {
-        HashNode* node = table[i];
-        while (node) {
-            HashNode* temp = node;
-            node = node->next;
-            delete temp;
+    delete[] arr;
+}
+
+int HashTable::hash(State *s) {
+    return (int)(s->hash_value % capacity);
+}
+
+State* HashTable::findOrInsert(State *x) {
+    int h = hash(x);
+    int original_h = h;
+    while (arr[h] != nullptr) {
+        if (arr[h]->equals(x)) {
+            return arr[h];
         }
+        h = (h + 1) % capacity;
+        if (h == original_h) break;
     }
-    delete[] table;
-}
 
-int HashTable::hashFunction(unsigned long long key) const {
-    return key % capacity;
-}
-
-bool HashTable::insert(State* state) {
-    int index = hashFunction(state->key);
-    HashNode* node = new HashNode{state, table[index]};
-    table[index] = node;
-    size++;
-
-    // Resize if load factor exceeds threshold
-    if ((float)size / capacity > loadFactorThreshold) {
+    if (number >= capacity / 2) {
         resize();
+        h = hash(x);
     }
-    return true;
+
+    arr[h] = x;
+    number++;
+    return x;
 }
 
-bool HashTable::contains(State* state) const {
-    int index = hashFunction(state->key);
-    HashNode* node = table[index];
-    while (node != nullptr) {
-        if (node->state->equals(state)) {
+void HashTable::insert(State *x) {
+    int h = hash(x);
+    int original_h = h;
+    while (arr[h] != nullptr) {
+        h = (h + 1) % capacity;
+        if (h == original_h) break;
+    }
+
+    if (number >= capacity / 2) {
+        resize();
+        h = hash(x);
+    }
+
+    arr[h] = x;
+    number++;
+}
+
+bool HashTable::contains(State *x) {
+    int h = hash(x);
+    int original_h = h;
+    while (arr[h] != nullptr) {
+        if (arr[h]->equals(x)) {
             return true;
         }
-        node = node->next;
+        h = (h + 1) % capacity;
+        if (h == original_h) break;
     }
     return false;
+}
+
+void HashTable::remove(State *x) {
+    int h = hash(x);
+    int original_h = h;
+    while (arr[h] != nullptr) {
+        if (arr[h]->equals(x)) {
+            delete arr[h];
+            arr[h] = nullptr;
+            number--;
+            return;
+        }
+        h = (h + 1) % capacity;
+        if (h == original_h) break;
+    }
+}
+
+void HashTable::print() {
+    for (int i = 0; i < capacity; i++) {
+        if (arr[i] != nullptr) {
+            arr[i]->print();
+        }
+    }
 }
 
 void HashTable::resize() {
     int oldCapacity = capacity;
     capacity *= 2;
-    HashNode** oldTable = table;
-    table = new HashNode*[capacity];
-    for (int i = 0; i < capacity; ++i) {
-        table[i] = nullptr;
-    }
+    State** newArr = new State*[capacity]();
 
-    // Rehash all nodes
     for (int i = 0; i < oldCapacity; ++i) {
-        HashNode* node = oldTable[i];
-        while (node) {
-            HashNode* nextNode = node->next;
-            int index = hashFunction(node->state->key);
-            node->next = table[index];
-            table[index] = node;
-            node = nextNode;
+        if (arr[i] != nullptr) {
+            int h = hash(arr[i]);
+            while (newArr[h] != nullptr) {
+                h = (h + 1) % capacity;
+            }
+            newArr[h] = arr[i];
         }
     }
-    delete[] oldTable;
+    delete[] arr;
+    arr = newArr;
 }
