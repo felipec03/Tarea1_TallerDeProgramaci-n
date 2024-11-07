@@ -5,11 +5,14 @@
 #include "State.h"
 
 class HashTable {
-    private:
+    public:
         int capacity;
         State **arr;
         int number;
-    public:
+        static const size_t MAX_LOAD_FACTOR = 1;
+        static const size_t CLEANUP_THRESHOLD = 50000000; 
+        static const size_t CLEANUP_TARGET = 1000000; 
+
         HashTable(size_t n);
         HashTable();
         ~HashTable();

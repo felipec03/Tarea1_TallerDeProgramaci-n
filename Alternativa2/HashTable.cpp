@@ -1,7 +1,8 @@
 // HashTable.cpp
 
 #include "HashTable.h"
-#include <functional>
+
+using namespace std;
 
 HashTable::HashTable(size_t n) {
     capacity = n;

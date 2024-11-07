@@ -2,7 +2,6 @@
 
 #include "State.h"
 #include <cmath>
-#include <bits/stdc++.h>
 using namespace std;
 
 State::State(int* arregloJugs, const int* maxCapacities, const int* goalVolumes, int numJugs, State* parent, const std::string& op) {
@@ -24,7 +23,7 @@ State::State(int* arregloJugs, const int* maxCapacities, const int* goalVolumes,
     unsigned long m = 1000000009;
     unsigned long power_of_p = 1;
     for (int i = 0; i < numJugs; ++i) {
-        hash = (hash + (this->arregloJugs[i] + 1) * power_of_p) % m;
+        hash = (hash + (arregloJugs[i] + 1) * power_of_p) % m;
         power_of_p = (power_of_p * p) % m;
     }
     this->hash_value = hash;
@@ -49,37 +48,6 @@ State::~State() {
     // Do not delete maxCapacities or goalVolumes since they are shared
 }
 
-
-void State::print() const {
-    std::cout << "Estado actual: ";
-    for (int i = 0; i < numJugs; i++) {
-        std::cout << arregloJugs[i] << " ";
-    }
-    std::cout << std::endl;
-}
-
-
-int State::heuristic() const {
-    int h = 0;
-    for (int i = 0; i < numJugs; ++i) {
-        int diff = std::abs(goalVolumes[i] - arregloJugs[i]);
-        h += diff;
-    }
-    return h;
-}
-
-bool State::equals(const State* other) const {
-    if (this->numJugs != other->numJugs && this->arregloJugs[0] != other->arregloJugs[0]) {
-        return false;
-        }
-    for (int i = 0; i < numJugs; ++i) {
-        if (this->arregloJugs[i] != other->arregloJugs[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool State::isSolution() const {
     for (int i = 0; i < numJugs; i++) {
         if (arregloJugs[i] != goalVolumes[i]) {
@@ -89,3 +57,32 @@ bool State::isSolution() const {
     return true;
 }
 
+void State::print() const {
+    cout << "Estado actual: ";
+    for (int i = 0; i < numJugs; i++) {
+        cout << arregloJugs[i] << " ";
+    }
+    cout << endl;
+}
+
+// Heurística para A*
+// Se enfoca en la diferencia entre los volúmenes actuales y los volúmenes objetivo
+int State::heuristic() const {
+    int h = 0;
+    for (int i = 0; i < numJugs; i++) {
+        h += abs(goalVolumes[i] - arregloJugs[i]);
+    }
+    return h;
+}
+
+bool State::equals(const State* other) const {
+    if (this->numJugs != other->numJugs) {
+        return false;
+    }
+    for (int i = 0; i < numJugs; ++i) {
+        if (this->arregloJugs[i] != other->arregloJugs[i]) {
+            return false;
+        }
+    }
+    return true;
+}

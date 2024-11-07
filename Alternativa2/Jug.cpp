@@ -1,6 +1,7 @@
 #include "Jug.h"
+using namespace std;
 
-Jug::Jug(State* initialState, unsigned long sizeOpen, unsigned long sizeAll) {
+Jug::Jug(State* initialState, unsigned long sizeOpen, unsigned long long sizeAll) {
     this->initialState = initialState;
 
     numberOfOperations = 3;
@@ -10,16 +11,11 @@ Jug::Jug(State* initialState, unsigned long sizeOpen, unsigned long sizeAll) {
     operationArray[2] = new Pour();
 
     open = new PriorityQueue(sizeOpen);
-    all = new HashTable(sizeAll);
+    all = new HashTable();
 
     initialState->priority = initialState->heuristic();
     open->push(initialState);
     all->insert(initialState);
-
-    //statesCapacity = 100;
-    //statesCount = 0;
-    //statesCreated = new State*[statesCapacity];
-    //statesCreated[statesCount++] = initialState;
 }
 
 State* Jug::solve() {
@@ -29,30 +25,26 @@ State* Jug::solve() {
         isGoalJug[i] = (initialState->goalVolumes[i] != initialState->arregloJugs[i]);
     }
 
-    int numberOfStates = 0;
-
     open->push(initialState);
     all->insert(initialState);
 
     while (!open->isEmpty()) {
         State* current = open->pop();
-        ++numberOfStates;
         
         if (current->isSolution()) {
             delete[] isGoalJug;
-            cout << "Solved in " << numberOfStates << " states" << endl;
             return current;
         }
 
         for (int i = 0; i < numberOfOperations; ++i) {
             Operation* operation = operationArray[i];
-
             if (operation->isUnary()) {
-                for (int jug = 0; jug < initialState->numJugs; ++jug) {
-                    if (isGoalJug[jug]) {
-                        State* newState = operation->operation(current, jug);
-                        if (newState && !all->contains(newState)) {
-                            newState->priority = newState->heuristic();
+                for (int j = 0; j < initialState->numJugs; ++j) {
+                    State* newState = operation->operation(current, j);
+                    if (newState != nullptr) {
+                        newState->costo = current->costo + 1;
+                        newState->priority = newState->costo + newState->heuristic();
+                        if (!all->contains(newState)) {
                             open->push(newState);
                             all->insert(newState);
                         } else {
@@ -61,16 +53,19 @@ State* Jug::solve() {
                     }
                 }
             } else {
-                for (int fromJug = 0; fromJug < initialState->numJugs; ++fromJug) {
-                    for (int toJug = 0; toJug < initialState->numJugs; ++toJug) {
-                        if (fromJug != toJug && (isGoalJug[fromJug] || isGoalJug[toJug])) {
-                            State* newState = operation->operation(current, fromJug, toJug);
-                            if (newState && !all->contains(newState)) {
-                                newState->priority = newState->heuristic();
-                                open->push(newState);
-                                all->insert(newState);
-                            } else {
-                                delete newState;
+                for (int a = 0; a < initialState->numJugs; ++a) {
+                    for (int b = 0; b < initialState->numJugs; ++b) {
+                        if (a != b) {
+                            State* newState = operation->operation(current, a, b);
+                            if (newState != nullptr) {
+                                newState->costo = current->costo + 1;
+                                newState->priority = newState->costo + newState->heuristic();
+                                if (!all->contains(newState)) {
+                                    open->push(newState);
+                                    all->insert(newState);
+                                } else {
+                                    delete newState;
+                                }
                             }
                         }
                     }
@@ -83,13 +78,15 @@ State* Jug::solve() {
     return nullptr;
 }
 
-void Jug::printSolution(State* state) {
+
+void Jug::printSolution(State* state, int numberOfStates) {
     if (state == nullptr) {
+        cout << "Numero de operaciones tomadas: " << numberOfStates << endl;
         return;
     }
-    printSolution(state->parent);
+    printSolution(state->parent, numberOfStates + 1);
     if (!state->op.empty()) {
-        std::cout << state->op << std::endl;
+        cout << state->op << endl;
         state->print();
     }
 }

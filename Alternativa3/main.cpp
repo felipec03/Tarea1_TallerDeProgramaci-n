@@ -53,21 +53,27 @@ bool readFile(const std::string& filename, int*& array1, int*& array2, int& coun
         size2++;
     }
 
+    // Verificar que ambas líneas tienen el mismo número de elementos
+    if (size1 != size2) {
+        std::cerr << "Las líneas tienen diferente cantidad de números." << std::endl;
+        delete[] array1;
+        return false;
+    }
+
     // asignamos memoria a segundo arreglo
     array2 = new int[size2];
-    // limpiar y resetear stream
-    iss2.clear(); 
-    iss2.str(line); 
+    // resetear stream
+    iss2.clear();
+    iss2.str(line);
 
     int index2 = 0;
     while (iss2 >> value) {
         array2[index2++] = value;
     }
 
-    // verificar que ambos arreglos tengan el mismo tamaño
+    // Establecer el número de jarras
     count = size1;
 
-    file.close();
     return true;
 }
 
@@ -86,14 +92,12 @@ int main() {
         return 1;
     }
 
-    const int* maxCapacities = initialVolumes;
     int* currentVolumes = new int[numJugs];
-
     for (int i = 0; i < numJugs; i++) {
         currentVolumes[i] = 0;
     }
 
-    State* initialState = new State(currentVolumes, maxCapacities, goalVolumes, numJugs, nullptr, "Inicio");
+    State* initialState = new State(currentVolumes, initialVolumes, goalVolumes, numJugs, nullptr, "Inicio");
 
     Jug j(initialState, 100000000, 100000000);
     State* solution = j.solve();
@@ -102,6 +106,7 @@ int main() {
     if (solution != nullptr) {
         cout << "Se encontró una solución!" << endl;
         j.printSolution(solution, 0);
+
     } else {
         cout << "No se encontró una solución..." << endl;
     }
