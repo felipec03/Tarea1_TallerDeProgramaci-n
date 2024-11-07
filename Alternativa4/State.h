@@ -25,6 +25,7 @@ public:
     void print() const;
     int heuristic() const;
     bool equals(const State* other) const;
+    
     // IDEA AVL
     bool operator<(const State& other) const;
     bool operator>(const State& other) const;

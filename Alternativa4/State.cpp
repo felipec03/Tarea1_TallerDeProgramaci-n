@@ -19,13 +19,9 @@ State::State(int* arregloJugs, const int* maxCapacities, const int* goalVolumes,
     this->priority = this->costo + heuristic();
 
     // Precompute the hash value
-    unsigned long hash = 0;
-    unsigned long p = 31;
-    unsigned long m = 1000000009;
-    unsigned long power_of_p = 1;
+    unsigned long hash = 5381;
     for (int i = 0; i < numJugs; ++i) {
-        hash = (hash + (this->arregloJugs[i] + 1) * power_of_p) % m;
-        power_of_p = (power_of_p * p) % m;
+        hash = ((hash << 5) + hash) + arregloJugs[i]; // DJB2 hash
     }
     this->hash_value = hash;
 }
@@ -61,10 +57,23 @@ void State::print() const {
 
 int State::heuristic() const {
     int h = 0;
+    int totalDiff = 0;
+    
+    // Calculate total volume difference
+    int currentTotal = 0;
+    int goalTotal = 0;
     for (int i = 0; i < numJugs; ++i) {
-        int diff = std::abs(goalVolumes[i] - arregloJugs[i]);
-        h += diff;
+        currentTotal += arregloJugs[i];
+        goalTotal += goalVolumes[i];
+        
+        // Direct differences weighted more heavily
+        h += std::abs(goalVolumes[i] - arregloJugs[i]) * 2;
     }
+    
+    // Add overall volume difference
+    totalDiff = std::abs(currentTotal - goalTotal);
+    h += totalDiff;
+    
     return h;
 }
 

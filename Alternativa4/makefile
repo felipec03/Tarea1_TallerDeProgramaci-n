@@ -1,4 +1,4 @@
-FLAGS = -pg -Wall -march=native -Ofast -ffast-math
+FLAGS = -pg -Wall -O3 -march=native -flto -ffast-math
 
 all: test_main
 

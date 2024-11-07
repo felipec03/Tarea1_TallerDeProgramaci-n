@@ -16,6 +16,10 @@ int HashTable::hash(const State& s) {
 }
 
 void HashTable::insert(const State& x) {
+    if (static_cast<double>(number) / capacity > LOAD_FACTOR_THRESHOLD) {
+        resize();
+    }
+
     int h = hash(x);
     if (!arr[h].find(x)) {
         arr[h].insert(x);
@@ -38,10 +42,40 @@ void HashTable::remove(const State& x) {
 }
 
 void HashTable::print() {
-    for (int i = 0; i < capacity; ++i) {
+    for (size_t i = 0; i < capacity; ++i) {
         if (!arr[i].empty()) {
             std::cout << "Bucket " << i << ":\n";
             arr[i].display();
         }
     }
+}
+
+// Idea resizing
+void HashTable::resize() {
+    size_t newCapacity = capacity * 2 + 1;
+    
+    // Check for overflow and max size
+    if (newCapacity < capacity || newCapacity > MAX_CAPACITY) {
+        newCapacity = MAX_CAPACITY;
+    }
+    
+    if (capacity >= MAX_CAPACITY) {
+        return; // Already at max capacity
+    }
+    
+    capacity = newCapacity;
+    AVLTree* newArr = new AVLTree[capacity];
+    
+    // Copy elements
+    for (size_t i = 0; i < capacity/2; i++) {
+        for (AVLNode* node = arr[i].root; node != nullptr;) {
+            AVLNode* next = node->right;
+            int newIndex = node->value.hash_value % capacity;
+            newArr[newIndex].insert(node->value);
+            node = next;
+        }
+    }
+    
+    delete[] arr;
+    arr = newArr;
 }

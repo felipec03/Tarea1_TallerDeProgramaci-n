@@ -11,11 +11,11 @@ Jug::Jug(State* initialState, unsigned long sizeOpen, unsigned long long sizeAll
     operationArray[2] = new Pour();
 
     open = new PriorityQueue(sizeOpen);
-    all = new HashTable();
+    all = new HashTable(sizeAll);
 
     initialState->priority = initialState->heuristic();
     open->push(initialState);
-    all->insert(initialState);
+    all->insert(*initialState);
 }
 
 State* Jug::solve() {
@@ -25,8 +25,10 @@ State* Jug::solve() {
         isGoalJug[i] = (initialState->goalVolumes[i] != initialState->arregloJugs[i]);
     }
 
+    int* newJugs = new int[initialState->numJugs];
+
     open->push(initialState);
-    all->insert(initialState);
+    all->insert(*initialState);
 
     while (!open->isEmpty()) {
         State* current = open->pop();
@@ -36,17 +38,24 @@ State* Jug::solve() {
             return current;
         }
 
+        if (current->costo > 30) { // Limit depth
+            continue;
+        }
+
+    
+
         for (int i = 0; i < numberOfOperations; ++i) {
             Operation* operation = operationArray[i];
             if (operation->isUnary()) {
                 for (int j = 0; j < initialState->numJugs; ++j) {
+                    memcpy(newJugs, current->arregloJugs, sizeof(int) * initialState->numJugs);
                     State* newState = operation->operation(current, j);
                     if (newState != nullptr) {
                         newState->costo = current->costo + 1;
                         newState->priority = newState->costo + newState->heuristic();
-                        if (!all->contains(newState)) {
+                        if (!all->contains(*newState)) {
                             open->push(newState);
-                            all->insert(newState);
+                            all->insert(*newState);
                         } else {
                             delete newState;
                         }
@@ -60,9 +69,9 @@ State* Jug::solve() {
                             if (newState != nullptr) {
                                 newState->costo = current->costo + 1;
                                 newState->priority = newState->costo + newState->heuristic();
-                                if (!all->contains(newState)) {
+                                if (!all->contains(*newState)) {
                                     open->push(newState);
-                                    all->insert(newState);
+                                    all->insert(*newState);
                                 } else {
                                     delete newState;
                                 }
@@ -74,6 +83,7 @@ State* Jug::solve() {
         }
     }
 
+    delete[] newJugs;
     delete[] isGoalJug;
     return nullptr;
 }

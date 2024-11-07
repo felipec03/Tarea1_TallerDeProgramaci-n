@@ -6,9 +6,14 @@
 
 class HashTable {
 public:
-    int capacity;
+    //int capacity;
     AVLTree* arr;  // Array of AVL Trees as buckets
     int number;
+
+    // Idea resizing
+    static constexpr  double LOAD_FACTOR_THRESHOLD = 0.75;
+    static constexpr size_t MAX_CAPACITY = 1000000007; // Use a large prime number
+    size_t capacity; // Change from int to size_t
 
     HashTable(size_t n);
     HashTable();
@@ -19,6 +24,10 @@ public:
     void remove(const State& x);
     void print();
     int hash(const State& x);
+
+    // Idea resizing
+    
+    void resize();
 };
 
 #endif  // HASHTABLE_H
